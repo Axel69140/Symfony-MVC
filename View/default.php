@@ -26,6 +26,13 @@
             <li class="nav-item">
                 <a class="nav-link" href="/test">Test</a>
             </li>
+            <li class="nav-item dropdown">
+                <a class="dropdown-toggle nav-link" data-bs-toggle="dropdown">Favoris</a>
+                <div class="dropdown-menu">
+                    <a href="/favorites/artists" class="dropdown-item nav-link">Artistes</a>
+                    <a href="/favorites/tracks" class="dropdown-item nav-link">Musiques</a>
+                </div>
+            </li>
         </ul>
     </div>
     <div>
@@ -56,6 +63,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

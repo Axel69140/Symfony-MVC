@@ -2,24 +2,29 @@
 
 namespace App\Entity;
 
-class Artist
+class Artist extends Model
 {
 
     public function __construct(
-        public string $id,
 
-        public string $name,
+        public ?string $spotify_id = null,
 
-        public int    $followers,
+        public ?string $name = null,
 
-        public array  $genders,
+        public ?int    $followers = null,
 
-        public string $link,
+        public ?array  $genders = null,
 
-        public string $picture,
+        public ?string $link = null,
+
+        public ?string $picture = null,
+
+        public ?int    $id = null
     )
     {
+        $this->table = "favArtists";
     }
+
 
     public function getId(): string
     {
@@ -88,8 +93,25 @@ class Artist
         return $this;
     }
 
+    public function isFav($artistId)
+    {
+        $temp = new Artist();
+        return $temp->findBy(['spotify_id' => $artistId]);
+    }
+
     public function display(): string
     {
+        if ($this->isFav($this->spotify_id)) {
+            $btn = "<a href=\"/favorites/favArtists/$this->spotify_id\">
+                                        <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\">️❤️
+                                        </button>
+                                    </a>";
+        } else {
+            $btn = "<a href=\"/favorites/favArtists/$this->spotify_id\">
+                                        <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\">🤍
+                                        </button>
+                                    </a>";
+        }
         return "<div class=\"col-lg-4 mb-5\">
                     <div class=\"card shadow-sm\">
                         <img class=\"bd-placeholder-img card-img-top\"
@@ -102,19 +124,15 @@ class Artist
                                     <a class=\"pr-2\" href=\"$this->link\">
                                         <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\">Spotify</button>
                                     </a>
-                                    <a href=\"/artist/albums/?artistid=$this->id\">
+                                    <a class=\"pr-2\" href=\"/artist/albums/$this->spotify_id\">
                                         <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\">Voir plus...
                                         </button>
                                     </a>
-                                    <a href=\"#\">
-                                        <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\">🖤
-                                        </button>
-                                    </a>
-                                    
+                                   $btn
                                 </div>
-                                <small class=\"text-muted\">$this->followers
-                                    listeners</small>
                             </div>
+                            <small class=\"text-muted\">$this->followers
+                                    listeners</small>
                         </div>
                     </div>
         </div>";

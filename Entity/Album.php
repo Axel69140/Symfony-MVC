@@ -133,7 +133,7 @@ class Album
                                     <a class='pr-2' href=\"$this->link\">
                                         <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\">Spotify</button>
                                     </a>
-                                    <a href=\"/artist/tracks/?albumid=" . $this->id . "\" class=\"ms-1\">
+                                    <a href=\"/artist/tracks/$this->id\" class=\"ms-1\">
                                         <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\">Voir les titres (" . $this->totalTracks . ")
                                         </button>
                                     </a>

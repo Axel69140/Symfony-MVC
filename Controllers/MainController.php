@@ -2,30 +2,37 @@
 
 namespace App\Controllers;
 
+use App\Entity\Album;
 use App\Entity\Artist;
 
 class MainController extends Controller
 {
     public function index()
     {
+        $allFavArtists = new Artist();
+        $allFavArtists = $allFavArtists->findAll();
+        $lastAlbumsFavs = [];
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/search?q=vald&type=artist");
+        if (!empty($allFavArtists)) {
+            foreach ($allFavArtists as $allFavArtist) {
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/artists/" . $allFavArtist->spotify_id . "/albums");
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $_SESSION['token']));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $result = json_decode(curl_exec($ch));
-        $artists = [];
-        foreach ($result->artists->items as $item) {
-            if (empty($item->images)) {
-                $picture = 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FUser_(computing)&psig=AOvVaw3baiXQH-s8hX5ZJ-QicfZJ&ust=1667901484961000&source=images&cd=vfe&ved=0CA0QjRxqFwoTCJDRg6_nm_sCFQAAAAAdAAAAABAI';
-            } else {
-                $picture = $item->images[0]->url;
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $_SESSION['token']));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $result = json_decode(curl_exec($ch));
+                if (empty($result->items[0]->images)) {
+                    $picture = 'https://i.ebayimg.com/images/g/DW0AAOxykVNRw2xX/s-l400.jpg';
+                } else {
+                    $picture = $result->items[0]->images[0]->url;
+                }
+
+                $tempAlbum = new Album($result->items[0]->id, $result->items[0]->name, $result->items[0]->release_date, $result->items[0]->total_tracks, $result->items[0]->external_urls->spotify, $picture);
+                array_push($lastAlbumsFavs, $tempAlbum);
             }
-            $artist = new Artist($item->id, $item->name, $item->followers->total, $item->genres, $item->external_urls->spotify, $picture);
-            array_push($artists, $artist);
         }
-        $this->render('main/index', compact('artists'));
+        
+        $this->render('main/index', compact('lastAlbumsFavs'));
 
     }
 }

@@ -12,12 +12,13 @@ class ArtistController extends Controller
     public function albums($id)
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/artists/" . substr($id, 10) . "/albums");
+        curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/artists/" . $id . "/albums");
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $_SESSION['token']));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = json_decode(curl_exec($ch));
         $albums = [];
+
         if ($result->items == null) {
             $message = 'Cet artiste n\'a pas d\'album :/';
             $this->render('artist/albums', compact('message'));
@@ -65,14 +66,11 @@ class ArtistController extends Controller
 
     public function tracks($albumId){
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/albums/" . substr($albumId, 9) . "/tracks");
+        curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/albums/" . $albumId . "/tracks");
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $_SESSION['token']));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = json_decode(curl_exec($ch));
-        /*echo "<pre>";
-        var_dump($result->items[0]);
-        echo "</pre>";*/
         $tracks = [];
         foreach ($result->items as $item) {
             $track = new Track($item->id, $item->name, $item->track_number, $item->duration_ms, $item->external_urls->spotify);

@@ -2,21 +2,25 @@
 
 namespace App\Entity;
 
-class Track
+class Track extends Model
 {
 
     public function __construct(
-        public string $id,
 
-        public string $name,
+        public ?string $spotify_id = null,
 
-        public int    $trackNumber,
+        public ?string $name = null,
 
-        public int    $duration,
+        public ?int    $track_number = null,
 
-        public string $link,
+        public ?int    $duration = null,
+
+        public ?string $link = null,
+
+        public ?int $id = null,
     )
     {
+        $this->table = "favTracks";
     }
 
     /**
@@ -54,17 +58,17 @@ class Track
     /**
      * @return int
      */
-    public function getTrackNumber(): int
+    public function gettrack_number(): int
     {
-        return $this->trackNumber;
+        return $this->track_number;
     }
 
     /**
-     * @param int $trackNumber
+     * @param int $track_number
      */
-    public function setTrackNumber(int $trackNumber): void
+    public function settrack_number(int $track_number): void
     {
-        $this->trackNumber = $trackNumber;
+        $this->track_number = $track_number;
     }
 
     /**
@@ -99,11 +103,29 @@ class Track
         $this->link = $link;
     }
 
+    public function isFav($trackId)
+    {
+        $temp = new Track();
+        return $temp->findBy(['spotify_id' => $trackId]);
+    }
+
     public function display(): string
     {
+        if ($this->isFav($this->spotify_id)){
+            $btn = "<a href=\"/favorites/favTracks/$this->spotify_id\">
+                                        <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\">️❤️
+                                        </button>
+                                    </a>";
+        }else{
+            $btn = "<a href=\"/favorites/favTracks/$this->spotify_id\">
+                                        <button type=\"button\" class=\"btn btn-sm btn-outline-secondary\">🤍
+                                        </button>
+                                    </a>";
+        }
         return "
-            <div class=\"col-4 themed-grid-col align-left\">$this->trackNumber. $this->name</div>
-            <div class=\"col-4 themed-grid-col\">$this->duration</div>
-            <div class=\"col-4 themed-grid-col\"><a href=" . $this->link . ">$this->link</a></div>";
+                <div class=\"col-1 themed-grid-col align-left\">$btn</div>
+                <div class=\"col-4 themed-grid-col align-left\">$this->track_number. $this->name</div>
+                <div class=\"col-3 themed-grid-col\">$this->duration</div>
+                <div class=\"col-4 themed-grid-col\"><a href=" . $this->link . ">$this->link</a></div>";
     }
 }
