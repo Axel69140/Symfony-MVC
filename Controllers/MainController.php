@@ -31,7 +31,7 @@ class MainController extends Controller
                 array_push($lastAlbumsFavs, $tempAlbum);
             }
         }
-        
+
         $this->render('main/index', compact('lastAlbumsFavs'));
 
     }

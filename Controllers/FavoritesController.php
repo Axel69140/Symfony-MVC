@@ -56,10 +56,46 @@ class FavoritesController extends Controller
         if ($tempTrack->findBy(['spotify_id' => $trackId])) {
             $tempTrack->delete($tempTrack->findBy(['spotify_id' => $trackId])[0]->id);
         } else {
-            $track = new Track($trackId, $result->name, $result->track_number, $result->duration_ms, $result->external_urls->spotify);
+            $authors = "";
+
+            foreach ($result->artists as $artist) {
+                $authors = $authors . $artist->name . ' ';
+            }
+            $track = new Track($trackId, $result->name, $authors, $result->track_number, $result->duration_ms, $result->external_urls->spotify);
             $track->create();
         }
         $this->render('favorites/favtracks');
     }
 
+
+    public function searchTrack()
+    {
+        $message = 'Cette musique n\'existe pas ^^';
+        if (empty($_POST['trackinput'])) {
+            $this->render('favorites/tracksearch', compact('message'));
+        } else {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/search?q=" . preg_replace('/\s+/', '_', $_POST['trackinput']) . "&type=track");
+
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $_SESSION['token']));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $result = json_decode(curl_exec($ch));
+            if ($result->tracks->items == null) {
+                $this->render('favorites/tracksearch', compact('message'));
+            }
+
+            $tracks = [];
+            $authors = "";
+            foreach ($result->tracks->items as $item) {
+                foreach ($item->artists as $artist){
+                    $authors = $authors . $artist->name . ' ';
+                }
+                $track = new Track($item->id, $item->name, $authors, $item->track_number, $item->duration_ms, $item->external_urls->spotify);
+                array_push($tracks, $track);
+                $authors = '';
+            }
+
+            $this->render('favorites/tracksearch', compact('tracks'));
+        }
+    }
 }

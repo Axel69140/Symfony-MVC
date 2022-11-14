@@ -72,9 +72,15 @@ class ArtistController extends Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = json_decode(curl_exec($ch));
         $tracks = [];
+        $authors = "";
+
         foreach ($result->items as $item) {
-            $track = new Track($item->id, $item->name, $item->track_number, $item->duration_ms, $item->external_urls->spotify);
+            foreach ($item->artists as $artist){
+                $authors = $authors . $artist->name . ' ';
+            }
+            $track = new Track($item->id, $item->name, $authors, $item->track_number, $item->duration_ms, $item->external_urls->spotify);
             array_push($tracks, $track);
+            $authors = '';
         }
         $this->render('artist/albumtracks', compact('tracks'));
     }

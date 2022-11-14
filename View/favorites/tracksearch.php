@@ -1,12 +1,6 @@
 <?php
 
-use App\Entity\Track;
-
-$allFavTracks = new Track();
-$allFavTracks = $allFavTracks->findAll();
-
 ?>
-
 <div class="container py-4">
     <form class="p-2 mb-2" method="post" enctype="multipart/form-data" action="/favorites/searchTrack">
         <div class="input-group container">
@@ -21,15 +15,14 @@ $allFavTracks = $allFavTracks->findAll();
         <div class="col-3 themed-grid-col bg-light">Durée</div>
         <div class="col-4 themed-grid-col bg-light">Lien Spotify</div>
     </div>
-    <div class="album py-2 container row">
+    <div class="album py-5 container row">
         <?php
-        if (!empty($allFavTracks)) {
-            foreach ($allFavTracks as $allFavTrack) {
-                $print = new Track($allFavTrack->spotify_id, $allFavTrack->name, $allFavTrack->author, $allFavTrack->track_number, $allFavTrack->duration, $allFavTrack->link);
-                echo $print->display();
+        if (isset($tracks)) {
+            foreach ($tracks as $track) {
+                echo $track->display();
             }
         } else{
-            echo '<h2>Vous n\'avez pas de musiques préférées :S</h2>';
+            echo '<h2>' . $message . '</h2>';
         }
         ?>
     </div>

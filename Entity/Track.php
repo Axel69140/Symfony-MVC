@@ -11,6 +11,8 @@ class Track extends Model
 
         public ?string $name = null,
 
+        public ?string $author = null,
+
         public ?int    $track_number = null,
 
         public ?int    $duration = null,
@@ -109,6 +111,38 @@ class Track extends Model
         return $temp->findBy(['spotify_id' => $trackId]);
     }
 
+    /**
+     * @return string|null
+     */
+    public function getSpotifyId(): ?string
+    {
+        return $this->spotify_id;
+    }
+
+    /**
+     * @param string|null $spotify_id
+     */
+    public function setSpotifyId(?string $spotify_id): void
+    {
+        $this->spotify_id = $spotify_id;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAuthor(): ?string
+    {
+        return $this->author;
+    }
+
+    /**
+     * @param string|null $author
+     */
+    public function setAuthor(?string $author): void
+    {
+        $this->author = $author;
+    }
+
     public function display(): string
     {
         if ($this->isFav($this->spotify_id)){
@@ -124,7 +158,7 @@ class Track extends Model
         }
         return "
                 <div class=\"col-1 themed-grid-col align-left\">$btn</div>
-                <div class=\"col-4 themed-grid-col align-left\">$this->track_number. $this->name</div>
+                <div class=\"col-4 themed-grid-col align-left\">$this->track_number. $this->name - $this->author</div>
                 <div class=\"col-3 themed-grid-col\">$this->duration</div>
                 <div class=\"col-4 themed-grid-col\"><a href=" . $this->link . ">$this->link</a></div>";
     }
